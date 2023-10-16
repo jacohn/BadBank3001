@@ -25,7 +25,7 @@ BadBank3001 is a simplistic banking application designed to manage user accounts
 *Note: Insert screenshots or GIFs of the project in action here.*
 
 ## Technology Used
-
+- **Frontend:**: React
 - **Backend:** Node.js, Express.js
 - **Database:** MongoDB
 - **Other:** CORS
