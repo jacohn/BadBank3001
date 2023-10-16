@@ -30,8 +30,10 @@ BadBank3001 is a simplistic banking application designed to manage user accounts
 - **Database:** MongoDB
 - **Other:** CORS
 
-## Features
 
+
+## Features
+[Link to Demo](./demo.mov)
 - **Account Creation:** Allows users to create a new account with name, email, and password.
 - **Login:** Enables users to log in using email and password.
 - **Balance Update:** Users can update their account balance by depositing or withdrawing funds.
