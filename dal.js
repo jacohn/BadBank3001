@@ -12,11 +12,10 @@ MongoClient.connect(url, { useUnifiedTopology: true }, function (err, client) {
 
 // create user account using the collection.insertOne function
 function create(name, email, password) {
-    // TODO: populate this function based off the video
     return new Promise((resolve, reject)=>{
-        const collection = db.collection('users');
+        const userCollection = db.collection('users');
         const doc= {name, email, password, balance:0};
-        collection.insertOne(doc, {w:1}, function(err, result){
+        userCollection.insertOne(doc, {w:1}, function(err, result){
             err ? reject(err): resolve(doc);
         });
     })
@@ -25,7 +24,7 @@ function create(name, email, password) {
 // find user account 
 function find(email) {
     return new Promise((resolve, reject) => {
-        const customers = db
+        const userCollection = db
             .collection('users')
             .find({ email: email })
             .toArray(function (err, docs) {
@@ -34,21 +33,11 @@ function find(email) {
     })
 }
 
-// find user account
-function findOne(email) {
-    return new Promise((resolve, reject) => {
-        const customers = db
-            .collection('users')
-            .findOne({ email: email })
-            .then((doc) => resolve(doc))
-            .catch((err) => reject(err));
-    })
-}
 
 // update - deposit/withdraw amount
 function update(email, amount) {
     return new Promise((resolve, reject) => {
-        const customers = db
+        const userCollection = db
             .collection('users')
             .findOneAndUpdate(
                 { email: email },
@@ -64,9 +53,9 @@ function update(email, amount) {
 }
 
 // return all users by using the collection.find method
-function all() {
+function alldata() {
     return new Promise((resolve, reject)=>{
-        const customers = db
+        const userCollection = db
             .collection('users')
             .find({})
             .toArray(function(err, docs){
@@ -76,4 +65,4 @@ function all() {
 }
 
 
-module.exports = { create, findOne, find, update, all };
+module.exports = { create, find, update, alldata };
