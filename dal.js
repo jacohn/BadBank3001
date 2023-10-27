@@ -1,17 +1,32 @@
-const MongoClient = require('mongodb').MongoClient;
+import pkg from 'mongodb'
+const {MongoClient}= pkg;
 const url = 'mongodb://localhost:27017';
 let db = null;
 
 // connect to mongo
 MongoClient.connect(url, { useUnifiedTopology: true }, function (err, client) {
+    if(err){ 
+        console.error("Failed to connect to the database: ", err);
+        return;
+    }
     console.log("Connected successfully to db server");
 
     // connect to myproject database
     db = client.db('myproject');
 });
 
+
 // create user account using the collection.insertOne function
-function create(name, email, password) {
+async function create(name, email, password) {
+    const hashedPassword = await bcrypt.hash(password, 10);
+    return new Promise((resolve, reject)=>{
+        const userCollection = db.collection('users');
+        const doc= {name, email, password: hashedPassword, balance: 0};
+        userCollection.insertOne(doc, {w:1}, function(err, result){
+            err ? reject(err): resolve(doc);
+        });
+    })
+
     return new Promise((resolve, reject)=>{
         const userCollection = db.collection('users');
         const doc= {name, email, password, balance:0};
@@ -65,4 +80,4 @@ function alldata() {
 }
 
 
-module.exports = { create, find, update, alldata };
+export { create, find, update, alldata };

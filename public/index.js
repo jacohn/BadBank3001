@@ -1,9 +1,12 @@
+import { HashRouter, Route } from 'react-router-dom';
+
+
 function Spa() {
   return (
     <HashRouter>
       <div>
         <NavBar/>        
-        <UserContext.Provider value={{users:[]}}>
+        <UserContext.Provider value={defaultUserContext}>
           <div className="container" style={{padding: "20px"}}>
             <Route path="/" exact component={Home} />
             <Route path="/CreateAccount/" component={CreateAccount} />

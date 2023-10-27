@@ -1,3 +1,5 @@
+import {Card} from './context.js';
+
 function Deposit(){
   const [show, setShow]     = React.useState(true);
   const [status, setStatus] = React.useState('');  
@@ -33,22 +35,36 @@ function DepositForm(props){
   const [amount, setAmount] = React.useState('');
 
   function handle(){
-    fetch(`/account/update/${email}/${amount}`)
-    .then(response => response.text())
-    .then(text => {
-        try {
-            const data = JSON.parse(text);
-            props.setStatus(JSON.stringify(data.value));
-            props.setShow(false);
-            console.log('JSON:', data);
-        } catch(err) {
-            props.setStatus('Deposit failed')
-            console.log('err:', text);
-        }
-    });
-  }
 
-  return(<>
+    // client side validation
+    if(!email || !amount || Number(amount) <=0) {
+      props.setStatus('Email and a positive amount are required.');
+      return;
+    }
+
+    const data = { email, amount};
+    const requestOptions = {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify(data)
+    };
+
+    fetch(`/account/update`, requestOptions)
+    .then(response => response.json())
+    .then(data => {
+        if(data.success){
+          props.setStatus(`Deposited $${amount} successfully.`);
+          props.setShow(false);
+        } else {
+          props.setStatus('Deposit failed. '+ data.message);
+        }
+      })
+      .catch(error=> {
+        props.setStatus('Error making deposit. Please try again.')
+      }
+
+
+  return(<div>
 
     Email<br/>
     <input type="input" 
@@ -66,5 +82,5 @@ function DepositForm(props){
       className="btn btn-light" 
       onClick={handle}>Deposit</button>
 
-  </>);
+  </div>);
 }

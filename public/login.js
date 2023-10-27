@@ -1,7 +1,11 @@
+import { UserContext } from './context.js';
+
 function Login(){
   const [show, setShow]     = React.useState(true);
-  const [status, setStatus] = React.useState('');    
-
+  const [status, setStatus] = React.useState('');
+  const ctx = React.useContext(UserContext);
+  
+  
   return (
     <Card
       bgcolor="secondary"
@@ -15,14 +19,14 @@ function Login(){
 }
 
 function LoginMsg(props){
-  return(<>
+  return(<div>
     <h5>Success</h5>
     <button type="submit" 
       className="btn btn-light" 
       onClick={() => props.setShow(true)}>
         Authenticate again
     </button>
-  </>);
+  </div>);
 }
 
 function LoginForm(props){
@@ -30,23 +34,33 @@ function LoginForm(props){
   const [password, setPassword] = React.useState('');
 
   function handle(){
-    fetch(`/account/login/${email}/${password}`)
-    .then(response => response.text())
-    .then(text => {
-        try {
-            const data = JSON.parse(text);
-            props.setStatus('');
-            props.setShow(false);
-            console.log('JSON:', data);
-        } catch(err) {
-            props.setStatus(text)
-            console.log('err:', text);
-        }
-    });
-  }
+    // CLient-side validation
+    if(!email || !password){
+      props.setStatus('Both email and password are required.');
+      return;
+    }
+
+    const data = {email, password};
+    const requestOptions = {
+      method:'POST',
+      headers: { 'Content-Type': 'application/json'},
+      body: JSON.stringify(data)
+    };
+
+    fetch('/account/login', requestOptions)
+    .then(response => response.json())
+    .then(data => {
+        if(data.success){
+          props.setStatus('Logged in successfully.');
+          props.setShow(false);
+        } else {
+          props.setStatus('Error during login. Please try again.');
+        });
+      }
+      
 
 
-  return (<>
+  return (<div>
 
     Email<br/>
     <input type="input" 
@@ -64,5 +78,5 @@ function LoginForm(props){
 
     <button type="submit" className="btn btn-light" onClick={handle}>Login</button>
    
-  </>);
+  </div>);
 }

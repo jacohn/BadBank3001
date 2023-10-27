@@ -15,12 +15,12 @@ function CreateAccount(){
 }
 
 function CreateMsg(props){
-  return(<>
+  return(<div>
     <h5>Success</h5>
     <button type="submit" 
       className="btn btn-light" 
       onClick={() => props.setShow(true)}>Add another account</button>
-  </>);
+  </div>);
 }
 
 function CreateForm(props){
@@ -28,18 +28,32 @@ function CreateForm(props){
   const [email, setEmail]       = React.useState('');
   const [password, setPassword] = React.useState('');
 
-  function handle(){
-    console.log(name,email,password);
-    const url = `/account/create/${name}/${email}/${password}`;
-    (async () => {
-        var res  = await fetch(url);
-        var data = await res.json();    
-        console.log(data);        
-    })();
-    props.setShow(false);
-  }    
+  async function handle(){
+    //basic client side validation
+    if(!name || !email || !password){
+      props.setStatus('All fields are required');
+      return;
+    }
 
-  return (<>
+    const data= { name, email, password};
+    const requestOptions = {
+      method: 'POST',
+      headers: {'Content-Type':'application/json'},
+      body: JSON.stringify(data)
+    };
+
+    const response = await fetch('/account/create', requestOptions);
+    const responseData = await response.json();
+
+    if(response.status === 200){
+      props.setShow(false);
+    } else{
+      props.setStatus(responseData.message);
+    }
+  }
+
+
+  return (<div>
 
     Name<br/>
     <input type="input" 
@@ -66,5 +80,5 @@ function CreateForm(props){
       className="btn btn-light" 
       onClick={handle}>Create Account</button>
 
-  </>);
+  </div>);
 }

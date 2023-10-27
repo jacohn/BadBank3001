@@ -15,7 +15,7 @@ function Withdraw(){
 }
 
 function WithdrawMsg(props){
-  return(<>
+  return(<div>
     <h5>Success</h5>
     <button type="submit" 
       className="btn btn-light" 
@@ -25,7 +25,7 @@ function WithdrawMsg(props){
       }}>
         Withdraw again
     </button>
-  </>);
+  </div>);
 }
 
 function WithdrawForm(props){
@@ -33,23 +33,37 @@ function WithdrawForm(props){
   const [amount, setAmount] = React.useState('');
 
   function handle(){
-    fetch(`/account/update/${email}/-${amount}`)
-    .then(response => response.text())
-    .then(text => {
-        try {
-            const data = JSON.parse(text);
-            props.setStatus(JSON.stringify(data.value));
-            props.setShow(false);
-            console.log('JSON:', data);
-        } catch(err) {
-            props.setStatus('Deposit failed')
-            console.log('err:', text);
+    //client side validation
+    if(!email || !amount || Number(amount) <=0){
+      props.setStatus('Email and a positive amount are required.');
+      return;
+    }
+
+    const data = {email, amount: -Math.abs(amount)}; //ensures negative amount
+
+    const requestOptions = {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(data)
+      };
+
+
+    fetch(`/account/update`, requestOptions)
+    .then(response => response.json())
+    .then(data => {
+        if(data.success){
+          props.setStatus(`Withdrew $${amount} successfully.`);
+          props.setShow(false); 
+        } else {
+          props.setStatus('Withdrawal failed. '+ data.message);
         }
-    });
-  }
+      })
+      .catch(error => {
+        props.setStatus('Error making withdrawal. Please try again.')
+      });
 
 
-  return(<>
+  return(<div>
 
     Email<br/>
     <input type="input" 
@@ -71,5 +85,7 @@ function WithdrawForm(props){
         Withdraw
     </button>
 
-  </>);
+  </div>);
 }
+
+export default Withdraw;

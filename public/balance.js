@@ -16,7 +16,7 @@ function Balance(){
 }
 
 function BalanceMsg(props){
-  return(<>
+  return(<div>
     <h5>Success</h5>
     <button type="submit" 
       className="btn btn-light" 
@@ -26,7 +26,7 @@ function BalanceMsg(props){
       }}>
         Check balance again
     </button>
-  </>);
+  </div>);
 }
 
 function BalanceForm(props){
@@ -34,23 +34,36 @@ function BalanceForm(props){
   const [balance, setBalance] = React.useState('');  
 
   function handle(){
-    fetch(`/account/findOne/${email}`)
-    .then(response => response.text())
-    .then(text => {
-        try {
-            const data = JSON.parse(text);
-            props.setStatus(text);
+    // client-side validation
+    if(!email){
+      props.setStatus('Email is required.');
+      return;
+    }
+
+    const data = {email};
+    const requestOptions = {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify(data)
+    };
+
+    fetch(`/account/findOne`, requestOptions)
+    .then(response => response.json())
+    .then(data => {
+        if(data.success){
+            props.setStatus(`Balance: $${data.balance}`);
             props.setShow(false);
-            setBalance(user.balance);
-            console.log('JSON:', data);
-        } catch(err) {
-            props.setStatus(text)
-            console.log('err:', text);
+            setBalance(data.balance);
+        } else {
+            props.setStatus('Failed to retrieve balance. ' + data.message);
         }
+    })
+    .catch(error => {
+      props.setStatus('Error checking balance. Please try again.');
     });
   }
 
-  return (<>
+  return (<div>
 
     Email<br/>
     <input type="input" 
@@ -65,5 +78,7 @@ function BalanceForm(props){
         Check Balance
     </button>
 
-  </>);
+  </div>);
 }
+
+export default Balance;

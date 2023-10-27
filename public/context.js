@@ -1,24 +1,38 @@
-const Route       = ReactRouterDOM.Route;
-const Link        = ReactRouterDOM.Link;
-const HashRouter  = ReactRouterDOM.HashRouter;
-const UserContext = React.createContext(null);
+import React from 'react';
+import PropTypes from 'prop-types'; // for type checking
+
+
+
+const defaultUserContext={
+  users: [],
+  loggedInUser: null
+};
+
+export const UserContext = React.createContext(defaultUserContext);
 
 function Card(props){
-  function classes(){
-    const bg  = props.bgcolor ? ' bg-' + props.bgcolor : ' ';
-    const txt = props.txtcolor ? ' text-' + props.txtcolor: ' text-white';
-    return 'card mb-3 ' + bg + txt;
-  }
-
   return (
-    <div className={classes()} style={{maxWidth: "18rem"}}>
-      <div className="card-header">{props.header}</div>
+    <div className={"card " + props.bgcolor + " mb-3"} style={{maxWidth: "18rem"}}>
+      <div className={"card-header " + props.txtcolor}>{props.header}</div>
+      {props.title && <h5 className="card-title">{props.title}</h5>}
+      {props.text && <p className="card-text">{props.text}</p>}
       <div className="card-body">
-        {props.title && (<h5 className="card-title">{props.title}</h5>)}
-        {props.text && (<p className="card-text">{props.text}</p>)}
         {props.body}
-        {props.status && (<div id='createStatus'>{props.status}</div>)}
       </div>
+      {props.status && <div id="createStatus">{props.status}</div>}
     </div>      
-  );    
+  );
 }
+
+// defining proptypes for the card component
+Card.propTypes={
+  bgcolor: PropTypes.string,
+  txtcolor: PropTypes.string,
+  header: PropTypes.string.isRequired,
+  title: PropTypes.string,
+  text: PropTypes.string,
+  body: PropTypes.node.isRequired,
+  status: PropTypes.string
+};
+
+export default Card;
