@@ -61,7 +61,8 @@ function DepositForm(props){
       })
       .catch(error=> {
         props.setStatus('Error making deposit. Please try again.')
-      }
+      });
+    }
 
 
   return(<div>

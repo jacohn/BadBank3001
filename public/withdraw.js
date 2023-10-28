@@ -61,6 +61,7 @@ function WithdrawForm(props){
       .catch(error => {
         props.setStatus('Error making withdrawal. Please try again.')
       });
+    }
 
 
   return(<div>

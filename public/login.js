@@ -55,8 +55,9 @@ function LoginForm(props){
           props.setShow(false);
         } else {
           props.setStatus('Error during login. Please try again.');
-        });
-      }
+        };
+      });
+    }
       
 
 

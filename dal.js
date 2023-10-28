@@ -1,4 +1,5 @@
 import pkg from 'mongodb'
+import bcrypt from 'bcrypt';
 const {MongoClient}= pkg;
 const url = 'mongodb://localhost:27017';
 let db = null;
@@ -22,14 +23,6 @@ async function create(name, email, password) {
     return new Promise((resolve, reject)=>{
         const userCollection = db.collection('users');
         const doc= {name, email, password: hashedPassword, balance: 0};
-        userCollection.insertOne(doc, {w:1}, function(err, result){
-            err ? reject(err): resolve(doc);
-        });
-    })
-
-    return new Promise((resolve, reject)=>{
-        const userCollection = db.collection('users');
-        const doc= {name, email, password, balance:0};
         userCollection.insertOne(doc, {w:1}, function(err, result){
             err ? reject(err): resolve(doc);
         });
